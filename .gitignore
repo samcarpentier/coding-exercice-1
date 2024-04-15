@@ -19,3 +19,11 @@
 
 # Go workspace file
 go.work
+
+/private
+.DS_Store
+
+bin/*
+!bin/.gitkeep
+texts/*
+!texts/.gitkeep
