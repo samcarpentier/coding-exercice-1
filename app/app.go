@@ -1,7 +1,10 @@
 package app
 
 import (
+	"fmt"
 	"log/slog"
+	"os"
+	"text/tabwriter"
 	"trigrams/config"
 	"trigrams/index"
 	"trigrams/parser"
@@ -21,7 +24,10 @@ func Run(config *config.Config) error {
 
 	ngramindex := index.New(config.WordSequenceSize)
 	ngramindex.CreateIndex(sanitizedText)
-	ngramindex.GetRankedSequencesByCount(config.NumberOfResultsToReturn)
+	topNWordsSequences := ngramindex.GetRankedSequencesByCount(config.NumberOfResultsToReturn)
+
+	slog.Info("Results compilation completed!")
+	printResultsAsTable(topNWordsSequences)
 
 	return nil
 }
@@ -34,4 +40,18 @@ func extractRawTextToParse(config *config.Config) (string, error) {
 	} else {
 		return config.RawTextInput, nil
 	}
+}
+
+// printResultsAsTable prints the top-n repeated words sequences as a human-readable table
+func printResultsAsTable(topNWordsSequence []index.RepeatedWordsSequence) {
+	tableWriter := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
+	fmt.Fprintln(tableWriter, "")
+	fmt.Fprintln(tableWriter, "Words Sequence\tCount")
+	fmt.Fprintln(tableWriter, "--------------------\t------")
+
+	for _, wordsSequence := range topNWordsSequence {
+		fmt.Fprintf(tableWriter, "%s\t%d\n", wordsSequence.WordsSequence, wordsSequence.Count)
+	}
+
+	tableWriter.Flush()
 }
