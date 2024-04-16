@@ -25,5 +25,3 @@ go.work
 
 bin/*
 !bin/.gitkeep
-texts/*
-!texts/.gitkeep

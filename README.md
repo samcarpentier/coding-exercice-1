@@ -4,20 +4,15 @@ Simple Go program that identifies the top-n most common _trigrams_ (sequences of
 
 ## Requirements
 
+* Built on MacOS Sonoma 14.4.1
+* Git 2.41.0
 * Go 1.22
 
 ```bash
 brew install go
 ```
 
-* Some samples of long text to parse with the program, under the `text/` folder
-
-```bash
-curl https://raw.githubusercontent.com/Axosoft/moby-git/main/full-text-moby-dick.txt -o ./texts/moby-dick.txt
-curl https://raw.githubusercontent.com/kuemit/txt_book/master/examples/alice_in_wonderland.txt -o ./texts/alice-in-wonderland.txt
-```
-
-## How to Run
+## Execution Instructions
 
 * To install external dependencies:
 
