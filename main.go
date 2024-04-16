@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"os"
 
+	"trigrams/app"
 	"trigrams/config"
 )
 
@@ -63,5 +64,12 @@ func main() {
 		}
 
 		slog.Debug(fmt.Sprintf("Successfully added %d raw characters from STDIN", len(cfg.RawTextInput)))
+	}
+
+	// Run main application
+	err := app.Run(cfg)
+	if err != nil {
+		slog.Error("Error encountered during main app execution!")
+		panic(err)
 	}
 }

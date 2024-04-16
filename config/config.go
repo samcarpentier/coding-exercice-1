@@ -17,7 +17,7 @@ type Config struct {
 	RawTextInput string
 }
 
-// New is the constructor for the Config structure.
+// New inatantiates a Config structure.
 func New(numberOfResultsToReturn int, wordSequenceSize int) *Config {
 	return &Config{
 		NumberOfResultsToReturn: numberOfResultsToReturn,
