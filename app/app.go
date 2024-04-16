@@ -3,6 +3,7 @@ package app
 import (
 	"log/slog"
 	"trigrams/config"
+	"trigrams/index"
 	"trigrams/parser"
 )
 
@@ -16,7 +17,11 @@ func Run(config *config.Config) error {
 	sanitizer := parser.NewTextSanitizer()
 	sanitizedText := sanitizer.Sanitize(rawTextToParse)
 
-	slog.Info(sanitizedText)
+	slog.Debug(sanitizedText)
+
+	ngramindex := index.New(config.WordSequenceSize)
+	ngramindex.CreateIndex(sanitizedText)
+	ngramindex.GetRankedSequencesByCount(config.NumberOfResultsToReturn)
 
 	return nil
 }

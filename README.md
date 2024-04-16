@@ -36,7 +36,7 @@ cat ./texts/file1.txt | go run ./main.go
 * To run all tests:
 
 ```bash
-go test ./...
+go test -v ./...
 ```
 
 ## Next Steps
