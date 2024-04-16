@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+
 	"text/tabwriter"
 	"trigrams/config"
 	"trigrams/index"
