@@ -11,7 +11,7 @@ type ExternalFilesReader struct {
 }
 
 // New instantiates a new ExternalFilesReader structure.
-func New(externalFilesList []string) *ExternalFilesReader {
+func NewExternalFilesReader(externalFilesList []string) *ExternalFilesReader {
 	return &ExternalFilesReader{
 		ExternalFilesList: externalFilesList,
 	}

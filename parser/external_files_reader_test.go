@@ -11,10 +11,10 @@ const (
 	FILE_PATH_2 = "./fixtures/simple_file2.txt"
 )
 
-func TestConfig(t *testing.T) {
+func TestExternalFilesReader(t *testing.T) {
 	t.Run("Given single file to read when ReadAllFilesContent then file content is returned", func(t *testing.T) {
 		// given
-		reader := New([]string{FILE_PATH_1})
+		reader := NewExternalFilesReader([]string{FILE_PATH_1})
 
 		// when
 		content, err := reader.ReadAllFilesContent()
@@ -26,7 +26,7 @@ func TestConfig(t *testing.T) {
 
 	t.Run("Given multiple files to read when ReadAllFilesContent then concatenated files content is returned", func(t *testing.T) {
 		// given
-		reader := New([]string{FILE_PATH_1, FILE_PATH_2})
+		reader := NewExternalFilesReader([]string{FILE_PATH_1, FILE_PATH_2})
 
 		// when
 		content, err := reader.ReadAllFilesContent()
@@ -38,7 +38,7 @@ func TestConfig(t *testing.T) {
 
 	t.Run("Given file doesn't exist when ReadAllFilesContent then error is returned", func(t *testing.T) {
 		// given
-		reader := New([]string{"UNKNOWN"})
+		reader := NewExternalFilesReader([]string{"UNKNOWN"})
 
 		// when
 		content, err := reader.ReadAllFilesContent()
