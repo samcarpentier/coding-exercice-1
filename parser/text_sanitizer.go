@@ -13,6 +13,7 @@ func NewTextSanitizer() *TextSanitizer {
 	return &TextSanitizer{}
 }
 
+// Sanitize takes raw text as input and returns a sanitized, ready to use string (case insensitive, no punctuation, no line breaks, no redundant spaces)
 func (t *TextSanitizer) Sanitize(rawText string) string {
 	var sanitizedText string
 
