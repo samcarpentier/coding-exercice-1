@@ -151,6 +151,7 @@ WE'RE NO [STRANGERS TO LOVE]
 * End-to-end tests have been written in the `app` package (see [`app_test.go`](./app/app_test.go))
 * App can easily be packaged and executed in a lightweight `alpine` Linux, non-root container
 * Text sanitizing capability is easily extensible due to the use of a Composite design pattern
+* A simple GitHub Actions CI workflow has been added to the project to download dependencies, run tests and build the app on code push
 
 ## Known Issues & Design Flaws
 
