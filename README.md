@@ -158,3 +158,13 @@ WE'RE NO [STRANGERS TO LOVE]
 * There is no STDIN timeout if no data is _piped_ into the process and no filenames are provided as positional arguments. The program will hang indefinitely if no input is provided.
 
 * Docker setup uses legacy multi-stage Dockerfile build instead of relying on the new `buildx` feature. This could be improved.
+
+## If Given More Time...
+
+1. Improve the way text is read from files or STDIN (line by line or group if lines by group of lines) instead of saving the whole raw text input in memory
+
+2. Implement multi-threading to parallelize text reading and processing, with adequate locks on the input file and in-memory data structures to avoid concurrency issues when reading/writing data
+
+3. Review the indexing and top-n results calculation methods in [`NGramIndex`](./index/ngram_index.go), including methods used from external libraries to verify time complexity of the operations being used. This could be an easy performance optimization of this code.
+
+4. Make use of standard design patterns. Even if Object-oriented (OO) paradigms were used, no "proper" design patterns were implemented. The text sanitizer could be reimplemented as a pipe-and-filter pattern, the sorting algorithm could be reimplemented as a strategy pattern, etc.
