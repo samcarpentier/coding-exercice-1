@@ -1,4 +1,4 @@
-# Trigrams Finder
+# Trigrams
 
 Simple Go program that identifies the top-n most common _trigrams_ (sequences of 3 words) in a text.
 
@@ -87,6 +87,14 @@ docker run -v $PWD/texts:/home/appuser/texts:rw test:latest -n 5 -s 3 /home/appu
 
 ```bash
 go test -v ./...
+
+# $ go test ./...
+# ?   	trigrams	            [no test files]
+# ok  	trigrams/app	        0.206s
+# ok  	trigrams/config	      0.444s
+# ok  	trigrams/filereader	  1.050s
+# ok  	trigrams/index	      0.830s
+# ok  	trigrams/sanitizer	  0.617s
 ```
 
 ### Dockerfile
@@ -102,11 +110,12 @@ go test ./...
 # /go # cd /data
 # /data # go mod download
 # /data # go test ./...
-# ?   	trigrams	[no test files]
-# ok  	trigrams/app	0.003s
-# ok  	trigrams/config	0.002s
-# ok  	trigrams/index	0.002s
-# ok  	trigrams/parser	0.006s
+# ?   	trigrams	            [no test files]
+# ok  	trigrams/app	        0.206s
+# ok  	trigrams/config	      0.444s
+# ok  	trigrams/filereader	  1.050s
+# ok  	trigrams/index	      0.830s
+# ok  	trigrams/sanitizer	  0.617s
 ```
 
 ## Architecture & Design Overview
@@ -114,10 +123,10 @@ go test ./...
 ### High-Level Program Execution
 
 * A configuration structure is instantiated from the CLI inputs provided by the user (see [`Config`](./config/config.go))
-* If CLI was used with external file paths as positional arguments, files content is read from disk (see [`ExternalFilesReader`](./parser/external_files_reader.go))
-* The raw text is then sanitized with the following rules (see [`TextSanitizer`](./parser/text_sanitizer.go)):
+* If CLI was used with external file paths as positional arguments, files content is read from disk (see [`ExternalFilesReader`](./filereader/external_files_reader.go))
+* The raw text is then sanitized with the following rules (see [`TextSanitizer`](./sanitizer/text_sanitizer.go)):
   * The whole text is converted to upper-case to make the count case insensitive
-  * All punctuation signs are removed, leaving only alphanumerical characters, apostrophes (single quote) and spaces
+  * All punctuation signs are removed, leaving only alphanumerical characters, apostrophes (single quotes) and spaces
   * Line breaks (`\n`) are converted to single spaces
   * Redundant spaces or tabs are removed
 * The n-words sequences (n-grams) are indexed in a `map` structure and their occurrences throughout the sanitized text are counted (see [`NGramIndex`](./index/ngram_index.go))
@@ -167,4 +176,4 @@ WE'RE NO [STRANGERS TO LOVE]
 
 3. Review the indexing and top-n results calculation methods in [`NGramIndex`](./index/ngram_index.go), including methods used from external libraries to verify time complexity of the operations being used. This could be an easy performance optimization of this code.
 
-4. Make use of standard design patterns. Even if Object-oriented (OO) paradigms were used, no "proper" design patterns were implemented. The text sanitizer could be reimplemented as a pipe-and-filter pattern, the sorting algorithm could be reimplemented as a strategy pattern, etc.
+4. Make better use of standard design patterns. For instance, the sorting function under the [`NGramIndex.GetRankedSequencesByCount`](./index/ngram_index.go) could be reimplemented as a strategy pattern.

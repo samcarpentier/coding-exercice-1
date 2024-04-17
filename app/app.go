@@ -7,8 +7,9 @@ import (
 
 	"text/tabwriter"
 	"trigrams/config"
+	"trigrams/filereader"
 	"trigrams/index"
-	"trigrams/parser"
+	"trigrams/sanitizer"
 )
 
 // Run is the main execution of the program
@@ -18,7 +19,7 @@ func Run(config *config.Config) error {
 		return err
 	}
 
-	sanitizer := parser.NewTextSanitizer()
+	sanitizer := sanitizer.NewTextSanitizer()
 	sanitizedText := sanitizer.Sanitize(rawTextToParse)
 
 	slog.Debug(sanitizedText)
@@ -36,7 +37,7 @@ func Run(config *config.Config) error {
 // extractRawTextToParse returns the content of the files passed as input or the content of STDIN
 func extractRawTextToParse(config *config.Config) (string, error) {
 	if len(config.ExternalFilesList) > 0 {
-		externalFilesReader := parser.NewExternalFilesReader(config.ExternalFilesList)
+		externalFilesReader := filereader.NewExternalFilesReader(config.ExternalFilesList)
 		return externalFilesReader.ReadAllFilesContent()
 	} else {
 		return config.RawTextInput, nil

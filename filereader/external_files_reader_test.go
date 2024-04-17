@@ -1,4 +1,4 @@
-package parser
+package filereader
 
 import (
 	"testing"
