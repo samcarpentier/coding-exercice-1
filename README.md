@@ -4,9 +4,10 @@ Simple Go program that identifies the top-n most common _trigrams_ (sequences of
 
 ## Requirements
 
-* Built on MacOS Sonoma 14.4.1
-* Git 2.41.0
+* MacOS Sonoma 14.4.1 (arm64)
 * Go 1.22
+* Git 2.41.0
+* Podman 5.0.1
 
 ```bash
 brew install go
@@ -26,6 +27,7 @@ go mod download
 
 ```bash
 # CLI usage:
+#
 # $ go run main.go -h
 # Usage of trigrams:
 #   -n int
@@ -41,14 +43,70 @@ cat ./texts/file1.txt ./texts/file2.txt | go run ./main.go -n 100 -s 3
 cat ./texts/* | go run ./main.go -n 100 -s 3
 ```
 
+### Docker
+
+A multi-stage [`Dockerfile`](./Dockerfile) has been built. The first stage uses a `golang` image to download dependencies and build a portable binary. The second stage is the runtime and uses a lightweight `alpine` Linux image. The binary is copied from the first stage onto the filesystem of the second stage and set as entrypoint.
+
+* Build the image:
+
+```bash
+docker build -t trigrams:latest .
+docker run trigrams:latest -h
+
+# Usage of /usr/local/bin/trigrams:
+#   -n int
+#     	Number of results to return (default 100)
+#   -s int
+#     	The size of the word sequence to capture (default 3)
+#   -v	Enables verbose logging
+```
+
+* Run the program inside a Docker container, with texts samples mounted via a volume:
+
+```bash
+docker run -v $PWD/texts:/home/appuser/texts:rw test:latest -n 5 -s 3 /home/appuser/texts/moby-dick.txt
+
+# 2024/04/17 00:32:56 main.go:52:        INFO Using 1 specified files filenames=[/home/appuser/texts/moby-dick.txt]
+# 2024/04/17 00:32:57 ngram_index.go:57: INFO Calculating the top-5 repeated 3 word sequences...
+# 2024/04/17 00:32:57 app.go:30:         INFO Results compilation completed!
+
+# Words Sequence       Count
+# -------------------- ------
+# THE SPERM WHALE      86
+# OF THE WHALE         78
+# THE WHITE WHALE      71
+# ONE OF THE           64
+# OUT OF THE           57
+```
+
 ## Testing
 
 ### Local
 
-* Run the tests
+* Run the tests:
 
 ```bash
 go test -v ./...
+```
+
+### Dockerfile
+
+* Run the tests:
+
+```bash
+docker run -ti -v $PWD:/data:rw golang:1.22.2-alpine3.19 sh
+cd /data
+go mod download
+go test ./...
+
+# /go # cd /data
+# /data # go mod download
+# /data # go test ./...
+# ?   	trigrams	[no test files]
+# ok  	trigrams/app	0.003s
+# ok  	trigrams/config	0.002s
+# ok  	trigrams/index	0.002s
+# ok  	trigrams/parser	0.006s
 ```
 
 ## Architecture & Design Overview
@@ -82,6 +140,7 @@ WE'RE NO [STRANGERS TO LOVE]
 * Size of the words sequences is configurable via CLI argument `-s`
 * Unit tests have been written for all public functions of every package
 * End-to-end tests have been written in the `app` package (see [`app_test.go`](./app/app_test.go))
+* App can easily be packaged as a lightweight `alpine` Linux, non-root container
 
 ## Next Steps
 
@@ -97,3 +156,5 @@ WE'RE NO [STRANGERS TO LOVE]
 * Handling of unicode characters, `\n`, `\r` and `\r\n` is simplistic. The bare minimum was done to make the program work with the dataset present in the [`texts/`](./texts/) folder.
 
 * There is no STDIN timeout if no data is _piped_ into the process and no filenames are provided as positional arguments. The program will hang indefinitely if no input is provided.
+
+* Docker setup uses legacy multi-stage Dockerfile build instead of relying on the new `buildx` feature. This could be improved.
