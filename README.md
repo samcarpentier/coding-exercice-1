@@ -36,9 +36,9 @@ go mod download
 #     	The size of the word sequence to capture (default 3)
 #   -v	Enables verbose logging
 
-go run ./main.go -n 100 -s 3 ./texts/file1.txt ./texts/file2.txt
+go run ./main.go -n 100 -s 3 ./texts/moby-dick.txt # texts/other1.txt texts/other2.txt
 # or
-cat ./texts/file1.txt ./texts/file2.txt | go run ./main.go -n 100 -s 3
+cat ./texts/moby-dick.txt | go run ./main.go -n 100 -s 3
 # or
 cat ./texts/* | go run ./main.go -n 100 -s 3
 ```
@@ -64,7 +64,7 @@ docker run trigrams:latest -h
 * Run the program inside a Docker container, with texts samples mounted via a volume:
 
 ```bash
-docker run -v $PWD/texts:/home/appuser/texts:rw test:latest -n 5 -s 3 /home/appuser/texts/moby-dick.txt
+docker run -v $PWD/texts:/home/appuser/texts:rw test:latest -n 100 -s 3 /home/appuser/texts/moby-dick.txt
 
 # 2024/04/17 00:32:56 main.go:52:        INFO Using 1 specified files filenames=[/home/appuser/texts/moby-dick.txt]
 # 2024/04/17 00:32:57 ngram_index.go:57: INFO Calculating the top-5 repeated 3 word sequences...
@@ -149,30 +149,28 @@ WE'RE NO [STRANGERS TO LOVE]
 * Size of the words sequences is configurable via CLI argument `-s`
 * Unit tests have been written for all public functions of every package
 * End-to-end tests have been written in the `app` package (see [`app_test.go`](./app/app_test.go))
-* App can easily be packaged as a lightweight `alpine` Linux, non-root container
-
-## Next Steps
-
+* App can easily be packaged and executed in a lightweight `alpine` Linux, non-root container
+* Text sanitizing capability is easily extensible due to the use of a Composite design pattern
 
 ## Known Issues & Design Flaws
 
-* The whole application is built with object-oriented (OO) paradigms even though Go is not an OO programming language per se. I chose to build the app this way since OO is the paradigm that I've used 95% of the time in the industry. However, I would be more than willing to get constructure criticism and tips on the best way to architect Go apps.
+* The whole application is built with object-oriented (OO) paradigms even though Go is not an OO programming language per se. I chose to build the app this way since OO is the paradigm that I've used 95% of the time in the industry.
 
-* At the moment, input files and STDIN input are read in their entirety upon program execution. This method of parsing doesn't scale to large files and could cause buffer overflows and/or abnormally high memory usage if in a production use-case.
+* At the moment, input files and STDIN are read in their entirety upon program execution. This method of parsing doesn't scale to large files and could cause buffer overflows and/or abnormally high memory usage if in a production use-case.
 
-* Hyphens on line-endings not handled; they are considered punctuation and stripped from the original text during the sanitization stage
+* Hyphens on line-endings not handled; they are considered punctuation and stripped from the original text during the sanitization stage. This can cause skewed results if a lot of words are split with a hyphen on line-ending in the input text.
 
 * Handling of unicode characters, `\n`, `\r` and `\r\n` is simplistic. The bare minimum was done to make the program work with the dataset present in the [`texts/`](./texts/) folder.
 
-* There is no STDIN timeout if no data is _piped_ into the process and no filenames are provided as positional arguments. The program will hang indefinitely if no input is provided.
+* There is no STDIN timeout if no data is _piped_ into the program and no filenames are provided as positional arguments. The program will hang indefinitely.
 
-* Docker setup uses legacy multi-stage Dockerfile build instead of relying on the new `buildx` feature. This could be improved.
+* Docker setup uses multi-stage Dockerfile build instead of relying on the new Docker BuildKit.
 
 ## If Given More Time...
 
-1. Improve the way text is read from files or STDIN (line by line or group if lines by group of lines) instead of saving the whole raw text input in memory
+1. Improve the way text is read from files or STDIN (line by line or group if lines by group of lines) instead of saving the whole raw text input in memory.
 
-2. Implement multi-threading to parallelize text reading and processing, with adequate locks on the input file and in-memory data structures to avoid concurrency issues when reading/writing data
+2. Implement multi-threading to parallelize text reading and processing, with adequate locks on the input file and in-memory data structures to avoid concurrency issues when reading/writing data,
 
 3. Review the indexing and top-n results calculation methods in [`NGramIndex`](./index/ngram_index.go), including methods used from external libraries to verify time complexity of the operations being used. This could be an easy performance optimization of this code.
 
