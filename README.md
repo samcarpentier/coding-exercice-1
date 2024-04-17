@@ -171,7 +171,7 @@ WE'RE NO [STRANGERS TO LOVE]
 
 ## If Given More Time...
 
-1. Improve the way text is read from files or STDIN (line by line or group if lines by group of lines) instead of saving the whole raw text input in memory.
+1. Improve the way text is read from files or STDIN (line by line or by group of lines) instead of loading the whole raw text input in memory.
 
 2. Implement multi-threading to parallelize text reading and processing, with adequate locks on the input file and in-memory data structures to avoid concurrency issues when reading/writing data,
 
