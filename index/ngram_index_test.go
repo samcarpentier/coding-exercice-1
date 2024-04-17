@@ -46,15 +46,22 @@ func TestNGramIndex(t *testing.T) {
 		idx.CreateIndex(SANITIZED_TEXT_SAMPLE)
 
 		// when
-		topOneRepeatedSequences := idx.GetRankedSequencesByCount(3)
+		topThreeRepeatedSequences := idx.GetRankedSequencesByCount(3)
 
 		// then
-		assert.Len(t, topOneRepeatedSequences, 3)
-		assert.Equal(t, "W2", topOneRepeatedSequences[0].WordsSequence)
-		assert.Equal(t, 2, topOneRepeatedSequences[0].Count)
-		assert.Equal(t, "W1", topOneRepeatedSequences[1].WordsSequence)
-		assert.Equal(t, 1, topOneRepeatedSequences[1].Count)
-		assert.Equal(t, "W3", topOneRepeatedSequences[2].WordsSequence)
-		assert.Equal(t, 1, topOneRepeatedSequences[2].Count)
+		assert.Len(t, topThreeRepeatedSequences, 3)
+		assert.Equal(t, "W2", topThreeRepeatedSequences[0].WordsSequence)
+		assert.Equal(t, 2, topThreeRepeatedSequences[0].Count)
+
+		// Since W1 and W3 are both at count 1, I used assert.ElementsMatch which disregards the order
+		// in the slice. If I attempted to match the indexes 1 and 2 of the slice exactly, I would end
+		// up with a "flaky" test because the order of same-count sequences is not deterministic with
+		// my current implementation.
+		expectedTopRepeatedSequences := []RepeatedWordsSequence{
+			{WordsSequence: "W2", Count: 2},
+			{WordsSequence: "W1", Count: 1},
+			{WordsSequence: "W3", Count: 1},
+		}
+		assert.ElementsMatch(t, expectedTopRepeatedSequences, topThreeRepeatedSequences)
 	})
 }

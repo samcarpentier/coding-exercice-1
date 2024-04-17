@@ -158,6 +158,8 @@ WE'RE NO [STRANGERS TO LOVE]
 
 * At the moment, input files and STDIN are read in their entirety upon program execution. This method of parsing doesn't scale to large files and could cause buffer overflows and/or abnormally high memory usage if in a production use-case.
 
+* Handling of same-count sequences is not deterministic. For instance, if 2 word sequences have a count of 6 occurrences, they can end up at different ranks in the final result, depending on the order in which they were read from the file and when they were inserted in the index map (see [`NGramIndex.CreateIndex`](./index/ngram_index.go)).
+
 * Hyphens on line-endings not handled; they are considered punctuation and stripped from the original text during the sanitization stage. This can cause skewed results if a lot of words are split with a hyphen on line-ending in the input text.
 
 * Handling of unicode characters, `\n`, `\r` and `\r\n` is simplistic. The bare minimum was done to make the program work with the dataset present in the [`texts/`](./texts/) folder.
