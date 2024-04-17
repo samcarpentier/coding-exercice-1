@@ -151,12 +151,15 @@ WE'RE NO [STRANGERS TO LOVE]
 * End-to-end tests have been written in the `app` package (see [`app_test.go`](./app/app_test.go))
 * App can easily be packaged and executed in a lightweight `alpine` Linux, non-root container
 * Text sanitizing capability is easily extensible due to the use of a Composite design pattern
+* A simple GitHub Actions CI workflow has been added to the project to download dependencies, run tests and build the app on code push
 
 ## Known Issues & Design Flaws
 
 * The whole application is built with object-oriented (OO) paradigms even though Go is not an OO programming language per se. I chose to build the app this way since OO is the paradigm that I've used 95% of the time in the industry.
 
 * At the moment, input files and STDIN are read in their entirety upon program execution. This method of parsing doesn't scale to large files and could cause buffer overflows and/or abnormally high memory usage if in a production use-case.
+
+* Handling of same-count sequences is not deterministic. For instance, if 2 word sequences have a count of 6 occurrences, they can end up at different ranks in the final result, depending on the order in which they were read from the file and when they were inserted in the index map (see [`NGramIndex.CreateIndex`](./index/ngram_index.go)).
 
 * Hyphens on line-endings not handled; they are considered punctuation and stripped from the original text during the sanitization stage. This can cause skewed results if a lot of words are split with a hyphen on line-ending in the input text.
 
